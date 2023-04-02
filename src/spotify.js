@@ -18,7 +18,7 @@ const scopes = [
 
 export const getTokenFromUrl = () => {//This code defines a function called getTokenFromUrl that extracts the access token from the URL hash after the user logs in. 
     return window.location.hash
-    //The function first retrieves the URL hash using window.location.hash and removes the '#' character using substring(1). 
+    //The function first retrieves the URL hash using window.location.hash and removes the '#' character using substring(1).substring is a method used to extract a portion of a string. 
     .substring(1)
     .split("&")//It then splits the string by the '&' character to create an array of key-value pairs.
     .reduce((initial, item) => {
