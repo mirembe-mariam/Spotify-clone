@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import  DataLayer from './DataLayer/DataLayer.js';
+import { DataLayer } from './DataLayer/DataLayer.js';
+
+import reducer, { initialState } from './reducer';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <DataLayer initialState reducer>
-    <App />
+    <DataLayer initialState={initialState} reducer={reducer}>
+    <App /> {/*this is referred to as children */}
     </DataLayer>
   </React.StrictMode>
 );

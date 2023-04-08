@@ -4,10 +4,14 @@ import Login from "./Login/Login.js";
 import Player from "./Player/Player";
 import { getTokenFromUrl } from "./spotify";
 import SpotifyWebApi from "spotify-web-api-js";
+import { useDataLayerValue } from "./DataLayer/DataLayer";
+
 const spotify = new SpotifyWebApi(); //craetes a new instance of the spotifywebapi class. this enbales us to make requests to the spotify webapi
 
 function App() {
-  const [token, setToken] = useState(null);
+ // const [token, setToken] = useState(null);
+  const [{ user, token }, dispatch] = useDataLayerValue();
+
   useEffect(() => {
     //is used to extract the access token from the URL hash
     const hash = getTokenFromUrl(); //varibale hash is created to store the token frm the function getTokenFromUrl
@@ -17,19 +21,37 @@ function App() {
     // This is considered good practice as it keeps the original hash variable untouched and makes the code more readable and easier to understand.
     if (_token) {
       //If the _token variable is truthy, we call the setToken function to update the state of the token variable with the new value of _token.
-      setToken(_token);
-      spotify.setAccessToken(_token);
-      spotify.getMe().then((user) => {
-        console.log("show me user", user);
+      dispatch({
+        type: "SET_TOKEN",
+        token: _token,
       });
+      //setToken(_token);
+      spotify.setAccessToken(_token);
+
+      spotify.getMe().then((user) => {
+        dispatch({
+          type: "SET_USER",
+          user: user,
+        });
+      });
+      spotify.getUserPlaylists().then((playlists)=> {// pulling data from spotify to show playlists
+      dispatch({
+        type: "SET_PLAYLISTS",
+        playlists: playlists,
+      })
+    });
+   
     }
     console.log("i have a token", token); //useEffect hook logs the token to the console
   }, []); //empty array specifies that the effect should only be run once, when the component mounts.
+
+  console.log("show me user", user);
+  console.log("_token", token);
   return (
     <div className="app">
       {
         //the code below states that if token state is value is truthy return the player else retun to the login page
-        token ? <Player /> : <Login />
+        token ? <Player spotify={spotify}/> : <Login />
       }
     </div>
   );
